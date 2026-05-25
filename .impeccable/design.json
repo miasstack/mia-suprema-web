@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-25T00:00:00Z",
+  "title": "Design System: Mia Suprema",
+  "extensions": {
+    "colorMeta": {
+      "void":         { "role": "neutral",   "displayName": "Void",         "canonical": "oklch(6% 0.006 330)",   "tonalRamp": ["#060406","#0a060a","#0f0a0f","#1c141c","#2a1f2a","#3d2e3d","#7a5e7a","#c4a8c4"] },
+      "nocturne":     { "role": "neutral",   "displayName": "Nocturne",     "canonical": "oklch(8% 0.007 330)",   "tonalRamp": ["#060406","#0e090e","#150f15","#221822","#332533","#4a364a","#826882","#c8aac8"] },
+      "velvet":       { "role": "neutral",   "displayName": "Velvet",       "canonical": "oklch(10% 0.008 330)",  "tonalRamp": ["#060406","#0e090e","#150f15","#1c141c","#291e29","#3e2e3e","#7b5f7b","#c6a8c6"] },
+      "onyx":         { "role": "neutral",   "displayName": "Onyx",         "canonical": "oklch(12% 0.009 330)",  "tonalRamp": ["#060406","#0e090e","#1c141c","#241a24","#322432","#493649","#7d607d","#c9abc9"] },
+      "gold":         { "role": "primary",   "displayName": "Antique Gold", "canonical": "oklch(72% 0.10 75)",    "tonalRamp": ["#2a2010","#3d3018","#574425","#7a6030","#9c7c3a","#c9a855","#e8d080","#f7eecc"] },
+      "gold-bright":  { "role": "primary",   "displayName": "Gold Bright",  "canonical": "oklch(85% 0.09 80)",    "tonalRamp": ["#2a2010","#3d3018","#574425","#7a6030","#9c7c3a","#c9a855","#e8d080","#f7eecc"] },
+      "scarlet-rose": { "role": "secondary", "displayName": "Scarlet Rose", "canonical": "oklch(55% 0.28 350)",   "tonalRamp": ["#1a0009","#3a0019","#660030","#9c0048","#cc0062","#e91e8c","#f570b8","#fbbcd9"] },
+      "parchment":    { "role": "neutral",   "displayName": "Parchment",    "canonical": "oklch(95% 0.015 75)",   "tonalRamp": ["#2a2518","#443f2e","#6a6144","#8e865e","#b5aa80","#d9ce9e","#f0e7c8","#f5edd8"] }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Display",  "purpose": "Hero artist name only. Enormous, 900 weight." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings across the full site." },
+      "title":    { "displayName": "Title",    "purpose": "Subsection heads and about/fans page titles." },
+      "body":     { "displayName": "Body",     "purpose": "Standard prose copy. Max 65ch line length." },
+      "label":    { "displayName": "Label",    "purpose": "All nav, buttons, genre tags, eyebrows, platform names." },
+      "caption":  { "displayName": "Caption",  "purpose": "Warm italic accent: hero tagline, about bio, fan subtitle." }
+    },
+    "shadows": [
+      { "name": "lift",         "value": "0 20px 60px rgba(0,0,0,0.5)",                                          "purpose": "Song card hover — confirms Y-axis movement." },
+      { "name": "gold-glow",    "value": "0 12px 40px rgba(201,168,85,0.3)",                                     "purpose": "Primary button hover — warmth feedback." },
+      { "name": "rose-glow",    "value": "0 0 70px rgba(233,30,140,0.55)",                                       "purpose": "Fan CTA hover — maximum urgency." },
+      { "name": "rose-ambient", "value": "0 0 28px rgba(233,30,140,0.45), 0 0 60px rgba(233,30,140,0.18)",      "purpose": "Bio fan button at rest — permanent glow, earned exception." }
+    ],
+    "motion": [
+      { "name": "ease-standard",  "value": "cubic-bezier(0.4, 0, 0.2, 1)",  "purpose": "Default state transitions (color, border, opacity)." },
+      { "name": "ease-lift",      "value": "ease",                           "purpose": "Card hover translateY and shadow — 0.35s." },
+      { "name": "ease-reveal",    "value": "ease",                           "purpose": "Scroll-triggered entrance — 0.85s." },
+      { "name": "ease-hero",      "value": "ease",                           "purpose": "Hero staggered entrance — 0.8–0.9s." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "1024px", "note": "Music grid and streaming strip switch to 2-col." },
+      { "name": "mobile", "value": "860px",  "note": "Nav collapses, section padding drops to 24px horizontal." },
+      { "name": "small",  "value": "500px",  "note": "Streaming strip goes 1-col, hero CTAs stack, feed goes 2-col." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Gold-filled CTA. Used for music and main actions.",
+      "html": "<button class=\"ds-btn-primary\">ESCÚCHALA</button>",
+      "css": ".ds-btn-primary { background: #C9A855; color: #060406; padding: 14px 40px; font-family: 'Josefin Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; border: none; border-radius: 0; cursor: pointer; transition: background 0.3s, transform 0.2s, box-shadow 0.3s; display: inline-block; } .ds-btn-primary:hover { background: #E8D080; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,85,0.3); } .ds-btn-primary:focus-visible { outline: 2px solid #C9A855; outline-offset: 3px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Transparent with cream border. Used as secondary action beside Primary.",
+      "html": "<button class=\"ds-btn-ghost\">CONÓCELA</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: rgba(245,237,216,0.6); padding: 13px 40px; font-family: 'Josefin Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; border: 1px solid rgba(245,237,216,0.3); border-radius: 0; cursor: pointer; transition: border-color 0.3s, color 0.3s; display: inline-block; } .ds-btn-ghost:hover { border-color: #F5EDD8; color: #F5EDD8; } .ds-btn-ghost:focus-visible { outline: 2px solid rgba(245,237,216,0.5); outline-offset: 3px; }"
+    },
+    {
+      "name": "Fan CTA",
+      "kind": "button",
+      "refersTo": "button-fan-cta",
+      "description": "Scarlet Rose filled. The one conversion button. Shimmer on hover, permanent ambient glow in bio.",
+      "html": "<a class=\"ds-btn-fan\" href=\"#\">✦ For the Real Fans →</a>",
+      "css": ".ds-btn-fan { display: inline-flex; align-items: center; gap: 10px; background: #E91E8C; color: #fff; padding: 17px 22px; font-family: 'Josefin Sans', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; border-radius: 3px; position: relative; overflow: hidden; box-shadow: 0 0 28px rgba(233,30,140,0.45), 0 0 60px rgba(233,30,140,0.18); transition: box-shadow 0.3s, transform 0.2s; } .ds-btn-fan::before { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(105deg, transparent, rgba(255,255,255,0.18), transparent); animation: ds-shimmer 3.5s ease 1.2s infinite; } .ds-btn-fan:hover { box-shadow: 0 0 70px rgba(233,30,140,0.55); transform: translateY(-2px); } @keyframes ds-shimmer { 0% { left: -60%; } 100% { left: 120%; } } .ds-btn-fan:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Nav CTA",
+      "kind": "button",
+      "refersTo": "nav-cta",
+      "description": "Scarlet Rose ghost button in navigation. Fills solid on hover.",
+      "html": "<a class=\"ds-nav-cta\" href=\"#\">✦ Real Fans</a>",
+      "css": ".ds-nav-cta { padding: 8px 20px; border: 1px solid rgba(233,30,140,0.5); color: #E91E8C; font-family: 'Josefin Sans', sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; display: inline-block; transition: background 0.3s, color 0.3s, border-color 0.3s; } .ds-nav-cta:hover { background: #E91E8C; color: #fff; border-color: #E91E8C; } .ds-nav-cta:focus-visible { outline: 2px solid #E91E8C; outline-offset: 2px; }"
+    },
+    {
+      "name": "Link Card",
+      "kind": "custom",
+      "description": "Social platform row with icon, label, handle, and animated gold fill on hover.",
+      "html": "<a class=\"ds-link-card\" href=\"#\"><div class=\"ds-link-icon\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" width=\"18\" height=\"18\"><path d=\"M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z\"/></svg></div><div class=\"ds-link-text\"><span class=\"ds-link-name\">Instagram</span><span class=\"ds-link-handle\">@soymiasuprema</span></div><span class=\"ds-link-arrow\">›</span></a>",
+      "css": ".ds-link-card { display: flex; align-items: center; gap: 20px; padding: 20px 28px; background: #150F15; border: 1px solid rgba(201,168,85,0.09); text-decoration: none; color: #F5EDD8; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s; } .ds-link-card::before { content: ''; position: absolute; inset: 0; background: rgba(201,168,85,0.12); transform: translateX(-105%); transition: transform 0.45s ease; } .ds-link-card:hover { border-color: rgba(201,168,85,0.4); transform: translateX(3px); } .ds-link-card:hover::before { transform: translateX(0); } .ds-link-icon { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; color: rgba(245,237,216,0.6); flex-shrink: 0; position: relative; z-index: 1; transition: color 0.3s; } .ds-link-card:hover .ds-link-icon { color: #C9A855; } .ds-link-text { flex: 1; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 2px; } .ds-link-name { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; color: #F5EDD8; } .ds-link-handle { font-size: 12px; color: rgba(245,237,216,0.3); } .ds-link-arrow { font-size: 18px; color: #C9A855; position: relative; z-index: 1; opacity: 0; transform: translateX(-8px); transition: opacity 0.3s, transform 0.3s; } .ds-link-card:hover .ds-link-arrow { opacity: 1; transform: translateX(0); } .ds-link-card:focus-visible { outline: 2px solid #C9A855; outline-offset: 2px; }"
+    },
+    {
+      "name": "Genre Tag",
+      "kind": "chip",
+      "description": "Decorative pill label for genre and category indicators.",
+      "html": "<span class=\"ds-genre-tag\">Reggaeton</span>",
+      "css": ".ds-genre-tag { display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; padding: 7px 18px; border: 1px solid rgba(201,168,85,0.3); color: #C9A855; border-radius: 50px; transition: background 0.3s, border-color 0.3s; } .ds-genre-tag:hover { background: rgba(201,168,85,0.12); border-color: #C9A855; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "La Noche de Oro",
+    "overview": "This is a surface built for the 10-second glance from a phone screen at midnight. A fan taps from an Instagram story into a world that feels like arriving at a private event — dark and quiet, something gold catching the light, the energy of something expensive and slightly dangerous.\n\nThe system uses four dark stops (#060406 through #1C141C) to create depth through tonal layering, not shadow. Gold carries authority; scarlet-rose carries urgency. Everything else is near-black. The design doesn't try to be Latin — it IS Latin in the way YSL is French: through precision, attitude, and the refusal to explain itself.\n\nAll copy is minimal. Labels are uppercase, tracked out, impossibly small. Headings are large to the point of risk. The space between them is the content.",
+    "keyCharacteristics": [
+      "Four-stop tonal dark system instead of flat black",
+      "Gold accent at ≤15% saturation on any surface; scarlet-rose for primary CTAs only",
+      "Cinzel Decorative for display and section headlines; Josefin Sans for body and labels",
+      "Sharp corners everywhere (radius: 0) except pill tags (50px) and circular avatars",
+      "Film grain at 4% opacity: always present, never noticed",
+      "No hover interactions on touch; full JS cursor on desktop"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule",   "body": "Scarlet Rose is used in ≤3 places per screen. A fourth use kills the urgency.", "section": "colors" },
+      { "name": "The Anti-Chrome Rule",  "body": "Gold means antique warmth. Never #FFD700 or chrome gold.", "section": "colors" },
+      { "name": "The Scale Cliff Rule",  "body": "The jump between type steps must remain abrupt. No intermediate sizes.", "section": "typography" },
+      { "name": "The Uppercase Ceiling", "body": "Uppercase with tracking is for labels only (≤11px). Never above 14px.", "section": "typography" },
+      { "name": "The At-Rest Rule",      "body": "Surfaces are flat at rest. Shadow responds to state only. The fan CTA bio glow is the one earned exception.", "section": "elevation" },
+      { "name": "The Whole-Card-is-a-Link Rule", "body": "Song cards are <a> tags. Platform icons inside are <span>. One tap target per card.", "section": "components" }
+    ],
+    "dos": [
+      "Do keep Scarlet Rose in ≤3 places per screen.",
+      "Do use the tonal layering system (Void → Nocturne → Velvet → Onyx) for depth.",
+      "Do make every song card and link card a single <a> tag.",
+      "Do respect prefers-reduced-motion: wrap all entrance animations.",
+      "Do load retargeting pixels before any other script.",
+      "Do keep label type at 9–11px uppercase with 0.22em–0.55em letter-spacing.",
+      "Do use Parchment (#F5EDD8) for all foreground text — never pure white.",
+      "Do keep touch targets at 44×44px minimum."
+    ],
+    "donts": [
+      "Don't use neon-on-black, graffiti fonts, or SoundCloud-rapper aesthetics.",
+      "Don't use the generic music-artist major-label layout on white.",
+      "Don't make the bio page look like Linktree.",
+      "Don't use tropical signifiers (bright reds, oranges, flag imagery, folkloric patterns).",
+      "Don't use gradient text (background-clip: text with a gradient background).",
+      "Don't add a fourth dark stop below Onyx or above Void.",
+      "Don't add looping decorative animations beyond grain, ticker, and scroll-indicator.",
+      "Don't use pure white (#fff) anywhere — Parchment (#F5EDD8) is the ceiling.",
+      "Don't use border-left as a colored accent stripe on any card or callout."
+    ]
+  }
+}
