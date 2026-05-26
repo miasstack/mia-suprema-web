@@ -927,6 +927,16 @@ a { text-decoration:none; color:inherit; }
   grid-template-columns: repeat(3,1fr);
   gap: 3px;
 }
+.feed-behold {
+  width: 100%;
+}
+.feed-behold behold-widget {
+  display: block;
+  width: 100%;
+  --behold-background: transparent;
+  --behold-gap: 3px;
+  --behold-columns: 3;
+}
 .feed-item {
   position: relative;
   padding-bottom: 100%;
