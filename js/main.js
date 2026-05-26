@@ -172,12 +172,22 @@ async function submitCapture(formId, successId) {
   const success = document.getElementById(successId);
   if (!form || !success) return;
 
+  // Inject error message element if not already there
+  let errMsg = form.querySelector('.capture-error');
+  if (!errMsg) {
+    errMsg = document.createElement('p');
+    errMsg.className = 'capture-error';
+    errMsg.style.cssText = 'color:var(--pink);font-size:0.78rem;margin-top:8px;display:none;';
+    form.appendChild(errMsg);
+  }
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
+    errMsg.style.display = 'none';
     const btn = form.querySelector('.capture-submit');
     const originalContent = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="animation:spin 0.8s linear infinite"><path d="M12 2a10 10 0 0 1 0 20A10 10 0 0 1 12 2zm0 2a8 8 0 0 0 0 16A8 8 0 0 0 12 4zm0 1a7 7 0 0 1 7 7h-2a5 5 0 0 0-5-5V5z"/></svg>';
+    btn.innerHTML = '…';
 
     try {
       const res = await fetch(form.action, {
@@ -189,14 +199,14 @@ async function submitCapture(formId, successId) {
         form.style.display  = 'none';
         success.removeAttribute('hidden');
       } else {
-        throw new Error('server');
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'server');
       }
-    } catch {
-      // Reset and briefly flash the submit button to signal error
-      btn.disabled     = false;
-      btn.innerHTML    = originalContent;
-      btn.style.outline = '2px solid var(--pink)';
-      setTimeout(() => { btn.style.outline = ''; }, 2000);
+    } catch (err) {
+      btn.disabled  = false;
+      btn.innerHTML = originalContent;
+      errMsg.textContent = 'Something went wrong — please try again.';
+      errMsg.style.display = 'block';
     }
   });
 }
