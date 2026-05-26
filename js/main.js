@@ -32,6 +32,18 @@ document.querySelectorAll('a, button').forEach(el => {
   });
 });
 
+// Also observe dynamically-added capture inputs for cursor state
+document.querySelectorAll('.capture-input-group input').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.classList.add('link-hover');
+    cursorOuter.classList.add('link-hover');
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.classList.remove('link-hover');
+    cursorOuter.classList.remove('link-hover');
+  });
+});
+
 // ─── NAV SCROLL ───────────────────────────────────────────
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
@@ -137,6 +149,78 @@ document.querySelectorAll('.fans-cta, .btn-primary, .btn-ghost').forEach(btn => 
     btn.style.transition = 'transform 0.45s ease, box-shadow 0.3s, background 0.3s';
   });
 });
+
+// ─── CONNECT TABS ─────────────────────────────────────────
+document.querySelectorAll('.links-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.links-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.links-tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    const panel = document.getElementById('links-panel-' + target);
+    if (panel) panel.classList.add('active');
+  });
+});
+
+// ─── CAPTURE FORMS ────────────────────────────────────────
+async function submitCapture(formId, successId) {
+  const form    = document.getElementById(formId);
+  const success = document.getElementById(successId);
+  if (!form || !success) return;
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = form.querySelector('.capture-submit');
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="animation:spin 0.8s linear infinite"><path d="M12 2a10 10 0 0 1 0 20A10 10 0 0 1 12 2zm0 2a8 8 0 0 0 0 16A8 8 0 0 0 12 4zm0 1a7 7 0 0 1 7 7h-2a5 5 0 0 0-5-5V5z"/></svg>';
+
+    try {
+      const res = await fetch(form.action, {
+        method:  'POST',
+        body:    new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display  = 'none';
+        success.removeAttribute('hidden');
+      } else {
+        throw new Error('server');
+      }
+    } catch {
+      // Reset and briefly flash the submit button to signal error
+      btn.disabled     = false;
+      btn.innerHTML    = originalContent;
+      btn.style.outline = '2px solid var(--pink)';
+      setTimeout(() => { btn.style.outline = ''; }, 2000);
+    }
+  });
+}
+
+submitCapture('capture-email', 'success-email');
+submitCapture('capture-sms',   'success-sms');
+submitCapture('capture-wa',    'success-wa');
+
+// WhatsApp: also open a chat after successful submission
+(function () {
+  const waForm = document.getElementById('capture-wa');
+  if (!waForm) return;
+  waForm.addEventListener('submit', e => {
+    // runs AFTER the async handler above, which already called preventDefault
+    const numRaw = (waForm.querySelector('input[type="tel"]')?.value || '').trim();
+    const num    = numRaw.replace(/[\s\(\)\-\.]/g, '').replace(/^\+/, '');
+    if (num.length >= 7) {
+      const msg = encodeURIComponent('Hola Mia! Me uno al inner circle de WhatsApp ✦');
+      setTimeout(() => {
+        window.open('https://wa.me/' + num + '?text=' + msg, '_blank', 'noopener,noreferrer');
+      }, 600);
+    }
+  }, true); // capture phase so it fires before the async one prevents default
+})();
 
 // ─── SMOOTH ANCHOR SCROLL ─────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(a => {

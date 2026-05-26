@@ -373,6 +373,10 @@ a { text-decoration:none; color:inherit; }
   from { opacity:0; }
   to   { opacity:1; }
 }
+@keyframes spin {
+  from { transform:rotate(0deg); }
+  to   { transform:rotate(360deg); }
+}
 
 /* ─── TICKER ─────────────────────────────────────────────── */
 .ticker {
@@ -631,18 +635,225 @@ a { text-decoration:none; color:inherit; }
 }
 .stream-btn:hover .stream-btn-name { color: var(--cream); }
 
-/* ─── SOCIAL LINKS ───────────────────────────────────────── */
+/* ─── SOCIAL LINKS / CONNECT ─────────────────────────────── */
 #links {
   background: var(--dark);
   padding: 120px 56px;
 }
-.links-header { margin-bottom: 48px; }
+.links-header { margin-bottom: 40px; }
+
+/* Tab navigation */
+.links-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid rgba(201,168,85,0.12);
+  max-width: 900px;
+  margin: 0 auto 48px;
+}
+.links-tab {
+  background: none;
+  border: none;
+  cursor: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--cream-30);
+  padding: 0 0 16px;
+  margin-right: 36px;
+  position: relative;
+  transition: color 0.3s;
+}
+.links-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.35s ease;
+}
+.links-tab.active { color: var(--gold); }
+.links-tab.active::after { transform: scaleX(1); }
+.links-tab:hover { color: var(--cream-60); }
+
+/* Tab panels */
+.links-tab-panel { display: none; }
+.links-tab-panel.active { display: block; }
+
 .links-grid {
   max-width: 740px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+/* ─── CAPTURE FORMS (Join the Lista tab) ─────────────────── */
+.capture-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.capture-card {
+  background: var(--dark-2);
+  border: 1px solid rgba(201,168,85,0.09);
+  padding: 32px 28px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: border-color 0.3s;
+}
+.capture-card:hover { border-color: rgba(201,168,85,0.22); }
+.capture-card--sms  { border-color: rgba(233,30,140,0.1); }
+.capture-card--sms:hover  { border-color: rgba(233,30,140,0.3); }
+.capture-card--wa   { border-color: rgba(37,211,102,0.1); }
+.capture-card--wa:hover   { border-color: rgba(37,211,102,0.3); }
+
+.capture-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  margin-bottom: 22px;
+  flex-shrink: 0;
+}
+.capture-card--sms .capture-icon { color: var(--pink); }
+.capture-card--wa  .capture-icon { color: #25D366; }
+
+.capture-body { flex: 1; display: flex; flex-direction: column; }
+.capture-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.capture-card--sms .capture-label { color: var(--pink); }
+.capture-card--wa  .capture-label { color: #25D366; }
+
+.capture-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.capture-sub {
+  font-size: 13px;
+  color: var(--cream-60);
+  line-height: 1.65;
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+/* Form */
+.capture-form { display: flex; flex-direction: column; gap: 10px; }
+.capture-input-group { display: flex; gap: 6px; }
+.capture-input-group input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,85,0.15);
+  color: var(--cream);
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 12px 14px;
+  outline: none;
+  cursor: none;
+  transition: border-color 0.3s;
+}
+.capture-input-group input::placeholder { color: var(--cream-30); }
+.capture-input-group input:focus       { border-color: var(--gold); }
+.capture-card--sms .capture-input-group input:focus { border-color: var(--pink); }
+.capture-card--wa  .capture-input-group input:focus { border-color: #25D366; }
+
+.capture-submit {
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  background: var(--gold);
+  border: none;
+  color: var(--black);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Josefin Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition: background 0.3s, transform 0.2s;
+}
+.capture-submit:hover           { background: var(--gold-lt); transform: scale(1.06); }
+.capture-submit:disabled        { opacity: 0.5; transform: none; cursor: not-allowed; }
+.capture-submit--sms            { background: var(--pink); color: white; }
+.capture-submit--sms:hover      { background: #f230a2; }
+.capture-submit--wa             { background: #25D366; color: white; }
+.capture-submit--wa:hover       { background: #1ebd5a; }
+
+.capture-consent {
+  font-size: 10px;
+  color: var(--cream-30);
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+/* Success states */
+.capture-success {
+  text-align: center;
+  padding: 20px 0 6px;
+  animation: fadeIn 0.5s ease forwards;
+}
+.capture-success-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,168,85,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 auto 14px;
+}
+.capture-success-icon--sms {
+  background: var(--pink-dim);
+  border-color: rgba(233,30,140,0.3);
+  color: var(--pink);
+}
+.capture-success-icon--wa {
+  background: rgba(37,211,102,0.1);
+  border-color: rgba(37,211,102,0.3);
+  color: #25D366;
+}
+.capture-success p {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.capture-card--sms .capture-success p { color: var(--pink); }
+.capture-card--wa  .capture-success p { color: #25D366; }
+
+/* Accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 .link-card {
   display: flex;
@@ -967,6 +1178,8 @@ footer {
   .music-grid { grid-template-columns:1fr; }
   .streaming-strip { grid-template-columns:1fr 1fr; gap:10px; }
   .footer-top { flex-direction:column; gap:28px; }
+  .links-tabs { margin-left:0; margin-right:0; }
+  .capture-grid { grid-template-columns:1fr; gap:12px; }
 }
 @media (max-width:500px) {
   .streaming-strip { grid-template-columns:1fr; }
