@@ -1,5 +1,5 @@
 /* ============================================================
-   MIA SUPREMA — SUPREMA OSCURA
+   MIA LA BANDIDA — LA NOCHE DE ORO
    Cinzel Decorative / Cormorant Garamond / Josefin Sans
    ============================================================ */
 
@@ -176,6 +176,20 @@ a { text-decoration:none; color:inherit; }
   align-items: center;
 }
 .nav-social-icon:hover { color: var(--gold); transform: translateY(-2px); }
+.nav-social-icon.fanvue-icon {
+  color: var(--pink);
+  animation: fv-pulse 2.4s ease-in-out infinite;
+}
+.nav-social-icon.fanvue-icon:hover {
+  color: #fff;
+  filter: drop-shadow(0 0 10px rgba(233,30,140,1)) drop-shadow(0 0 18px rgba(201,168,85,0.5));
+  transform: translateY(-2px) scale(1.15);
+  animation: none;
+}
+@keyframes fv-pulse {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(233,30,140,0.5)); }
+  50% { filter: drop-shadow(0 0 9px rgba(233,30,140,0.95)) drop-shadow(0 0 18px rgba(201,168,85,0.4)); }
+}
 .nav-links .nav-cta,
 .nav-right .nav-cta {
   padding: 8px 20px;
@@ -263,11 +277,11 @@ a { text-decoration:none; color:inherit; }
   opacity: 0;
   animation: fadeUp 0.9s ease 0.5s forwards;
 }
-.name-suprema {
+.name-bandida {
   display: block;
-  font-size: clamp(36px, 6.8vw, 98px);
+  font-size: clamp(26px, 5.2vw, 74px);
   font-weight: 700;
-  letter-spacing: 0.38em;
+  letter-spacing: 0.32em;
   color: transparent;
   -webkit-text-stroke: 1.5px var(--gold);
   opacity: 0;
@@ -1198,6 +1212,64 @@ footer {
   .feed-grid { grid-template-columns:1fr 1fr; }
 }
 
+/* ─── SECTION DIVIDER LINES ──────────────────────────────── */
+.section-title::after {
+  content: '';
+  display: block;
+  height: 1px;
+  width: 0;
+  background: linear-gradient(to right, var(--gold), rgba(201,168,85,0));
+  margin-top: 18px;
+  transition: width 1.5s cubic-bezier(0.22,1,0.36,1) 0.15s;
+}
+.section-title.active::after,
+.section-title:not(.reveal)::after { width: 160px; }
+
+/* ─── HERO SPOTLIGHT ─────────────────────────────────────── */
+#hero-spotlight {
+  position: absolute;
+  width: 680px;
+  height: 680px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,85,0.09) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 2;
+  top: 0; left: 0;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  will-change: transform, left, top;
+}
+
+/* ─── AMBIENT ORBS ───────────────────────────────────────── */
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+@keyframes orbDrift0 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  35%     { transform: translate(50px,-60px) scale(1.12); }
+  68%     { transform: translate(-35px,40px) scale(0.93); }
+}
+@keyframes orbDrift1 {
+  0%,100% { transform: translate(0,0) scale(1.04); }
+  42%     { transform: translate(-55px,45px) scale(0.9); }
+  75%     { transform: translate(40px,-30px) scale(1.1); }
+}
+@keyframes orbDrift2 {
+  0%,100% { transform: translate(15px,10px) scale(1); }
+  50%     { transform: translate(-30px,-50px) scale(1.14); }
+}
+
+/* ─── 3D CARD TILT ───────────────────────────────────────── */
+.song-card, .link-card {
+  transform-origin: center center;
+  will-change: transform;
+}
+
 /* ─── REDUCED MOTION ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   /* Respect system preference — freeze entrance and looping animations.
@@ -1207,7 +1279,7 @@ footer {
   .scroll-line { animation: none; }
   .hero-eyebrow,
   .name-mia,
-  .name-suprema,
+  .name-bandida,
   .hero-tagline,
   .hero-genres,
   .hero-ctas,
@@ -1224,6 +1296,9 @@ footer {
     transition: none;
   }
   .fans-cta::before { transition: none; }
+  .ambient-orb { animation: none !important; }
+  .section-title::after { transition: none; width: 160px; }
+  #hero-spotlight { display: none; }
   #cursor,
   #cursor-outer { display: none; }
   * { cursor: auto !important; }
