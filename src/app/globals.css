@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --elevated: #1f2b47;
+  --border: #2a3a5c;
+  --accent: #e94560;
+  --gold: #c9a855;
+  --text: #e8e6e3;
+  --text-dim: rgba(232, 230, 227, 0.5);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.message-content pre {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+
+.message-content code {
+  background: rgba(110, 118, 129, 0.2);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+}
+
+.message-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3 {
+  font-weight: 600;
+  margin: 16px 0 8px;
+}
+
+.message-content h2 {
+  font-size: 1.15em;
+  color: var(--gold);
+}
+
+.message-content ul,
+.message-content ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.message-content li {
+  margin: 4px 0;
+}
+
+.message-content table {
+  border-collapse: collapse;
+  margin: 8px 0;
+  width: 100%;
+}
+
+.message-content th,
+.message-content td {
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  text-align: left;
+}
+
+.message-content th {
+  background: rgba(42, 58, 92, 0.5);
+  font-weight: 600;
+}
+
+.message-content p {
+  margin: 6px 0;
+}
+
+.message-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.skill-picker-item:hover {
+  background: var(--elevated);
+}
+
+.typing-cursor::after {
+  content: '▊';
+  animation: blink 1s step-end infinite;
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.15s ease-out forwards;
+}
