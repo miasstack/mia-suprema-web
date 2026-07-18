@@ -5,6 +5,9 @@ import { useRouter, useParams } from 'next/navigation'
 import { Chat, Message, Memory } from '@/types'
 import { store } from '@/lib/store'
 import { findSkill, parseSkillCommand, getSkills } from '@/lib/skills'
+import { streamChat } from '@/lib/llm'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import Sidebar from '@/components/Sidebar'
 import MessageView from '@/components/MessageView'
 import CommandInput from '@/components/CommandInput'
@@ -19,6 +22,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [memories, setMemories] = useState<Memory[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
+  const [streamingText, setStreamingText] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [memoryPanelOpen, setMemoryPanelOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -91,6 +95,11 @@ export default function ChatPage() {
             const mems = await store.getMemories()
             setMemories(mems)
           },
+          removeMemory: async (id: string) => {
+            await store.deleteMemory(id)
+            const mems = await store.getMemories()
+            setMemories(mems)
+          },
         }
         const result = await skill.handler(parsed.args, ctx)
 
@@ -143,12 +152,36 @@ export default function ChatPage() {
     }
 
     setIsProcessing(true)
-    const response = generateResponse(input, memories)
+    setStreamingText('')
+
+    const history = [...messages, userMsg].filter((m) => m.role !== 'system')
+    const result = await streamChat(history, memories, {
+      onToken: (text) => setStreamingText(text),
+    })
+
+    let content = result.content
+    if (result.error) {
+      content = `**Backend error:** ${result.error}`
+    } else if (!content) {
+      content = '_The model returned an empty response. Try again._'
+    }
+
+    // Persist any memories the model chose to save.
+    if (result.memories.length > 0) {
+      for (const mem of result.memories) {
+        await store.addMemory(mem.key, mem.value, chatId, ['auto'])
+      }
+      const mems = await store.getMemories()
+      setMemories(mems)
+    }
+
     const assistantMsg = await store.addMessage({
       chat_id: chatId,
       role: 'assistant',
-      content: response,
+      content,
+      metadata: result.memories.length > 0 ? { memories_saved: result.memories.map((m) => m.key) } : undefined,
     })
+    setStreamingText(null)
     setMessages((prev) => [...prev, assistantMsg])
     setIsProcessing(false)
   }
@@ -208,7 +241,18 @@ export default function ChatPage() {
                     <div className="w-6 h-6 rounded bg-hermes-accent flex items-center justify-center text-xs font-mono font-bold text-white shrink-0 mt-0.5">
                       H
                     </div>
-                    <div className="text-sm text-hermes-text-dim typing-cursor">Thinking</div>
+                    {streamingText ? (
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-mono font-semibold text-hermes-text-dim">Hermes</span>
+                        </div>
+                        <div className="message-content text-sm leading-relaxed">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingText}</ReactMarkdown>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-hermes-text-dim typing-cursor">Thinking</div>
+                    )}
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -241,31 +285,4 @@ export default function ChatPage() {
       </main>
     </div>
   )
-}
-
-function generateResponse(input: string, memories: Memory[]): string {
-  const lower = input.toLowerCase()
-
-  const relevantMemories = memories.filter(
-    (m) =>
-      lower.includes(m.key.toLowerCase()) ||
-      m.tags.some((t) => lower.includes(t.toLowerCase()))
-  )
-
-  if (relevantMemories.length > 0) {
-    const memContext = relevantMemories
-      .map((m) => `- **${m.key}**: ${m.value}`)
-      .join('\n')
-    return `Based on what I remember:\n\n${memContext}\n\nHow would you like me to help with this?`
-  }
-
-  if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
-    return 'Hey. What are we working on?'
-  }
-
-  if (lower.includes('who are you') || lower.includes('what are you')) {
-    return `I'm **Hermes** — your always-on command center. I can:\n\n- Run skills with \`/\` commands\n- Remember things across chats with \`/remember\`\n- Recall context from any conversation with \`/recall\`\n- Connect to external tools via MCP\n\nType \`/help\` to see all available skills.`
-  }
-
-  return `Got it. I've noted that.\n\nRight now I'm running in **local mode** — I process skill commands (\`/help\`, \`/remember\`, \`/recall\`, etc.) and store memories across your chats.\n\nTo connect me to an AI backend for full conversations, add your API keys in \`/config\`. Type \`/help\` to see what I can do.`
 }

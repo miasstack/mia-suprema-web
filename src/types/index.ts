@@ -37,6 +37,7 @@ export interface SkillContext {
   chatId: string
   memories: Memory[]
   addMemory: (key: string, value: string, tags?: string[]) => Promise<void>
+  removeMemory: (id: string) => Promise<void>
 }
 
 export interface MCPServer {

@@ -1,4 +1,5 @@
 import { Skill, SkillContext } from '@/types'
+import { getBackendStatus } from './llm'
 
 const skills: Skill[] = [
   {
@@ -53,6 +54,7 @@ const skills: Skill[] = [
       const key = args.trim()
       const match = ctx.memories.find((m) => m.key.toLowerCase() === key.toLowerCase())
       if (!match) return `No memory with key "${key}" found.`
+      await ctx.removeMemory(match.id)
       return `Forgot: **${key}**\n\n_Memory deleted._`
     },
   },
@@ -78,14 +80,22 @@ const skills: Skill[] = [
     usage: '/status',
     handler: async (_args, ctx) => {
       const memCount = ctx.memories.length
+      const backend = await getBackendStatus()
+      const llmLine = !backend
+        ? 'Unreachable (is the app deployed with API routes?)'
+        : !backend.configured
+          ? 'Not configured — set HERMES_LLM_API_KEY (agnes key) in Vercel env vars'
+          : backend.online
+            ? `Online — ${backend.base_url} (model: ${backend.model})`
+            : `Configured but FreeLLMAPI is unreachable at ${backend.base_url}`
       return [
         '## Hermes Status',
         '',
+        `- **LLM backend**: ${llmLine}`,
         `- **Memories**: ${memCount} stored`,
         `- **Chat**: ${ctx.chatId}`,
         `- **Storage**: ${typeof window !== 'undefined' && localStorage.getItem('hermes:chats') ? 'Local' : 'Supabase'}`,
-        `- **Status**: Online`,
-        `- **Version**: 0.1.0`,
+        `- **Version**: 0.2.0`,
       ].join('\n')
     },
   },
@@ -110,20 +120,27 @@ const skills: Skill[] = [
     usage: '/config [key] [value]',
     handler: async (args) => {
       if (!args.trim()) {
+        const backend = await getBackendStatus()
+        const modelList =
+          backend?.models && backend.models.length > 0
+            ? `\n\n**Available models** (via FreeLLMAPI):\n${backend.models.map((m) => `- \`${m}\``).join('\n')}`
+            : ''
         return [
           '## Hermes Config',
           '',
           '| Key | Value |',
           '|-----|-------|',
+          `| llm_endpoint | ${backend?.base_url || 'unknown'} |`,
+          `| model | ${backend?.model || 'auto'} |`,
+          `| configured | ${backend?.configured ? 'yes' : 'no — set HERMES_LLM_API_KEY'} |`,
           '| theme | dark |',
-          '| font_size | 14px |',
-          '| model | claude-sonnet-5 |',
           '| auto_title | true |',
+          modelList,
           '',
-          'Use `/config <key> <value>` to update.',
+          'Backend settings live in Vercel env vars: `HERMES_LLM_BASE_URL`, `HERMES_LLM_API_KEY`, `HERMES_LLM_MODEL`.',
         ].join('\n')
       }
-      return 'Config updates will be saved to your preferences.'
+      return 'Config is managed via Vercel environment variables (`HERMES_LLM_*`). Update them in the Vercel dashboard and redeploy.'
     },
   },
 ]
