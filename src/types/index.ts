@@ -30,7 +30,17 @@ export interface Skill {
   name: string
   description: string
   usage: string
+  // Present on prompt skills: instructions injected into the model's system
+  // prompt when invoked, instead of running a local handler.
+  instructions?: string
   handler: (args: string, context: SkillContext) => Promise<string>
+}
+
+export interface CustomSkill {
+  name: string
+  description: string
+  instructions: string
+  created_at: string
 }
 
 export interface SkillContext {

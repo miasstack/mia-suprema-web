@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Chat, Message, Memory } from '@/types'
 import { store } from '@/lib/store'
-import { findSkill, parseSkillCommand, getSkills } from '@/lib/skills'
+import { findSkill, parseSkillCommand, getSkills, saveCustomSkill } from '@/lib/skills'
 import { streamChat } from '@/lib/llm'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -82,10 +82,67 @@ export default function ChatPage() {
       setChats(chatList)
     }
 
+    const runModel = async (history: Message[], skillOpt?: { name: string; instructions: string }) => {
+      setIsProcessing(true)
+      setStreamingText('')
+
+      const result = await streamChat(history, memories, { onToken: (text) => setStreamingText(text) }, { skill: skillOpt })
+
+      let content = result.content
+      if (result.error) {
+        content = `**Backend error:** ${result.error}`
+      } else if (!content) {
+        content = '_The model returned an empty response. Try again._'
+      }
+
+      // Persist any memories the model chose to save.
+      if (result.memories.length > 0) {
+        for (const mem of result.memories) {
+          await store.addMemory(mem.key, mem.value, chatId, ['auto'])
+        }
+        const mems = await store.getMemories()
+        setMemories(mems)
+      }
+
+      // Install any custom skills the model created (via /skill-creator).
+      const installed: string[] = []
+      for (const s of result.skills) {
+        if (s.name && s.instructions) {
+          saveCustomSkill(s)
+          installed.push(s.name)
+        }
+      }
+      if (installed.length > 0) {
+        content += `\n\n> ⚡ Skill installed: ${installed.map((n) => `\`/${n}\``).join(', ')}`
+      }
+
+      const assistantMsg = await store.addMessage({
+        chat_id: chatId,
+        role: 'assistant',
+        content,
+        skill_used: skillOpt?.name,
+        metadata:
+          result.memories.length > 0 ? { memories_saved: result.memories.map((m) => m.key) } : undefined,
+      })
+      setStreamingText(null)
+      setMessages((prev) => [...prev, assistantMsg])
+      setIsProcessing(false)
+    }
+
     const parsed = parseSkillCommand(input)
     if (parsed) {
       setIsProcessing(true)
       const skill = findSkill(parsed.skill)
+      if (skill && skill.instructions) {
+        // Prompt skill: hand the turn to the model with the skill's
+        // instructions injected into the system prompt.
+        setIsProcessing(false)
+        await runModel([...messages, userMsg].filter((m) => m.role !== 'system'), {
+          name: skill.name,
+          instructions: skill.instructions,
+        })
+        return
+      }
       if (skill) {
         const ctx = {
           chatId,
@@ -151,39 +208,7 @@ export default function ChatPage() {
       return
     }
 
-    setIsProcessing(true)
-    setStreamingText('')
-
-    const history = [...messages, userMsg].filter((m) => m.role !== 'system')
-    const result = await streamChat(history, memories, {
-      onToken: (text) => setStreamingText(text),
-    })
-
-    let content = result.content
-    if (result.error) {
-      content = `**Backend error:** ${result.error}`
-    } else if (!content) {
-      content = '_The model returned an empty response. Try again._'
-    }
-
-    // Persist any memories the model chose to save.
-    if (result.memories.length > 0) {
-      for (const mem of result.memories) {
-        await store.addMemory(mem.key, mem.value, chatId, ['auto'])
-      }
-      const mems = await store.getMemories()
-      setMemories(mems)
-    }
-
-    const assistantMsg = await store.addMessage({
-      chat_id: chatId,
-      role: 'assistant',
-      content,
-      metadata: result.memories.length > 0 ? { memories_saved: result.memories.map((m) => m.key) } : undefined,
-    })
-    setStreamingText(null)
-    setMessages((prev) => [...prev, assistantMsg])
-    setIsProcessing(false)
+    await runModel([...messages, userMsg].filter((m) => m.role !== 'system'))
   }
 
   return (
