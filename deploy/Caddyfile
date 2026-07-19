@@ -1,0 +1,8 @@
+# HTTPS in front of the Hermes web app.
+# No domain: Caddy serves a self-signed cert on the VPS IP — the browser will
+# warn once; accept it. With a domain, replace ":443" with the domain name and
+# Caddy gets a real Let's Encrypt certificate automatically.
+:443 {
+	tls internal
+	reverse_proxy 127.0.0.1:8090
+}

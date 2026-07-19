@@ -20,7 +20,15 @@ Next.js API route  ── injects agnes key, max_tokens 8192 ──►  FreeLLMA
 The key never reaches the browser, and the HTTPS page never talks to the
 HTTP VPS directly (no mixed-content problems).
 
-## One-time setup (required before chat works)
+## Deploying INSIDE the VPS (recommended — private, self-hosted)
+
+See **`deploy/README.md`** — one command runs the app on the VPS itself behind
+HTTPS and a password (`HERMES_WEB_PASSWORD`), talking to FreeLLMAPI over
+localhost, with port 3000 closed to the public internet. Browser access via
+the login page; agents (Claude, ChatGPT/Codex) authenticate with
+`Authorization: Bearer <password>`.
+
+## Alternative: Vercel hosting (one-time setup)
 
 1. Open the FreeLLMAPI dashboard: `http://146.148.98.134:3000` → **Keys**.
 2. Copy the unified API key for the **agnes** account (starts with `freellmapi-`).

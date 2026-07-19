@@ -1,0 +1,35 @@
+# Hermes web app on the VPS, next to the existing FreeLLMAPI container.
+#
+# Uses host networking so the app reaches FreeLLMAPI on 127.0.0.1:3000 even
+# after FreeLLMAPI is re-bound to loopback (recommended — see deploy/README.md).
+#
+# Create deploy/.env first:
+#   HERMES_LLM_API_KEY=<agnes unified key>
+#   HERMES_WEB_PASSWORD=<your login password>
+services:
+  hermes-web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    network_mode: host          # app listens on 127.0.0.1:8090 (never exposed directly)
+    environment:
+      - PORT=8090
+      - HOSTNAME=127.0.0.1
+      - HERMES_LLM_BASE_URL=http://127.0.0.1:3000/v1
+      - HERMES_LLM_MODEL=auto
+      - HERMES_LLM_API_KEY=${HERMES_LLM_API_KEY}
+      - HERMES_WEB_PASSWORD=${HERMES_WEB_PASSWORD}
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    network_mode: host          # serves HTTPS on 443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
